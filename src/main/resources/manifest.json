@@ -1,0 +1,20 @@
+{
+  "Group": "net.entropyentertainment.simplefactions",
+  "Name": "SimpleFactions",
+  "Version": "1.0.0",
+  "Description": "",
+  "Authors": [
+    {
+      "Name": "Entropire",
+      "Email": "",
+      "Url": "https://entropyentertainment.net"
+    }
+  ],
+  "Website": "",
+  "ServerVersion": "*",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "Main": "net.entropyentertainment.simplefactions.SimpleFactions"
+}
