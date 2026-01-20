@@ -3,6 +3,7 @@ package net.entropyentertainment.simplefactions.database;
 import net.entropyentertainment.simplefactions.database.dao.FactionDAO;
 import net.entropyentertainment.simplefactions.database.dao.InviteDAO;
 import net.entropyentertainment.simplefactions.database.dao.MemberDAO;
+import net.entropyentertainment.simplefactions.database.dao.RequestDAO;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -18,6 +19,7 @@ public final class Database {
     private FactionDAO factionDAO;
     private MemberDAO memberDAO;
     private InviteDAO inviteDAO;
+    private RequestDAO requestDAO;
 
     public Database(Path databasePath) {
         instance = this;
@@ -76,5 +78,12 @@ public final class Database {
             inviteDAO = new InviteDAO(connection);
         }
         return inviteDAO;
+    }
+
+    public RequestDAO requests(){
+        if(requestDAO == null){
+            requestDAO = new RequestDAO(connection);
+        }
+        return requestDAO;
     }
 }

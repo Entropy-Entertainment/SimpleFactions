@@ -1,21 +1,21 @@
 package net.entropyentertainment.simplefactions.model;
 
-public class Invite {
+public class Request {
 
     private Integer id;
-    private int receiverId;
+    private int senderId;
     private int factionId;
     private long created_at;
 
 
-    public Invite(Integer id, int receiverId, int factionId, Long created_at){
+    public Request(Integer id, int senderId, int factionId, Long created_at){
         this.id = id;
-        this.receiverId = receiverId;
+        this.senderId = senderId;
         this.factionId = factionId;
         this.created_at = created_at;
     }
 
-    public Invite(int receiverID, int factionID){
+    public Request(int receiverID, int factionID){
         this(null, receiverID, factionID, null);
     }
 
@@ -27,12 +27,12 @@ public class Invite {
         this.id = id;
     }
 
-    public int getReceiverId() {
-        return receiverId;
+    public int getSenderId() {
+        return senderId;
     }
 
-    public void setReceiverId(int receiverId) {
-        this.receiverId = receiverId;
+    public void setReceiverID(int receiverID) {
+        this.senderId = receiverID;
     }
 
     public int getFactionId() {

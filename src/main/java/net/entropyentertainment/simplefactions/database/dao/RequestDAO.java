@@ -1,24 +1,25 @@
 package net.entropyentertainment.simplefactions.database.dao;
 
 import net.entropyentertainment.simplefactions.model.Invite;
+import net.entropyentertainment.simplefactions.model.Request;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InviteDAO {
+public class RequestDAO {
 
     private Connection connection;
 
-    public InviteDAO(Connection connection){
+    public RequestDAO(Connection connection){
         this.connection = connection;
 
         try (Statement statement = connection.createStatement())
         {
             statement.execute("""
-                CREATE TABLE IF NOT EXISTS Invites (
+                CREATE TABLE IF NOT EXISTS Requests (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    receiver_id INTEGER NOT NULL,
+                    sender_id INTEGER NOT NULL,
                     faction_id INTEGER NOT NULL,
                     created_at INTEGER NOT NULL,
                 
@@ -26,37 +27,37 @@ public class InviteDAO {
                         REFERENCES Factions(id)
                         ON DELETE CASCADE,
                 
-                    FOREIGN KEY (receiver_id)
+                    FOREIGN KEY (sender_id)
                         REFERENCES Members(id)
                         ON DELETE CASCADE
                 );
-               """);
-            statement.execute("""
-                CREATE INDEX IF NOT EXISTS idx_invites_faction
-                ON Invites(faction_id);
                 """);
             statement.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS uq_invites_receiver_faction
-                ON Invites(receiver_id, faction_id);
+                CREATE INDEX IF NOT EXISTS idx_requests_faction
+                ON Requests(faction_id);
+                """);
+            statement.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS uq_requests_sender_faction
+                ON Requests(sender_id, faction_id);
                """);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Invite insert(Invite invite){
+    public Request insert(Request request){
         long nowEpoch = System.currentTimeMillis() / 1000;
 
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO Invites(receiver_id, faction_id, created_at) VALUES(?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
-            ps.setInt(1, invite.getReceiverId());
-            ps.setInt(2, invite.getFactionId());
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO Requests(sender_id, faction_id, created_at) VALUES(?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
+            ps.setInt(1, request.getSenderId());
+            ps.setInt(2, request.getFactionId());
             ps.setLong(3, nowEpoch);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int id = rs.getInt(1);
-                    return new Invite(id, invite.getReceiverId(), invite.getFactionId(), nowEpoch);
+                    return new Request(id, request.getSenderId(), request.getFactionId(), nowEpoch);
                 } else {
                     throw new SQLException("Failed to retrieve generated ID for invite");
                 }
@@ -66,15 +67,15 @@ public class InviteDAO {
         }
     }
 
-    public Invite findById(int id){
-        try (PreparedStatement ps = connection.prepareStatement("SELECT id, receiver_id, faction_id, created_at FROM Invites where id = ?")){
+    public Request findById(int id){
+        try (PreparedStatement ps = connection.prepareStatement("SELECT id, sender_id, faction_id, created_at FROM Requests where id = ?")){
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()){
-                return new Invite(
+                return new Request(
                         rs.getInt("id"),
-                        rs.getInt("receiver_id"),
+                        rs.getInt("sender_id"),
                         rs.getInt("faction_id"),
                         rs.getLong("created_at")
                 );
@@ -85,50 +86,50 @@ public class InviteDAO {
         }
     }
 
-    public List<Invite> findAllByReceiverId(int receiverId){
-        List<Invite> invites = new ArrayList<>();
+    public List<Request> findAllBySenderId(int senderId){
+        List<Request> requests = new ArrayList<>();
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT id, receiver_id, faction_id, created_at FROM Invites where receiver_id = ?")){
-            ps.setInt(1, receiverId);
+        try (PreparedStatement ps = connection.prepareStatement("SELECT id, sender_id, faction_id, created_at FROM Requests where sender_id = ?")){
+            ps.setInt(1, senderId);
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()){
-                invites.add(new Invite(
+                requests.add(new Request(
                         rs.getInt("id"),
-                        rs.getInt("receiver_id"),
+                        rs.getInt("sender_id"),
                         rs.getInt("faction_id"),
                         rs.getLong("created_at")
                 ));
             }
-            return invites;
+            return requests;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<Invite> findAllByFactionId(int factionId){
-        List<Invite> invites = new ArrayList<>();
+    public List<Request> findAllByFactionId(int factionId){
+        List<Request> requests = new ArrayList<>();
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT id, receiver_id, faction_id, created_at FROM Invites where faction_id = ?")){
+        try (PreparedStatement ps = connection.prepareStatement("SELECT id, sender_id, faction_id, created_at FROM Requests where faction_id = ?")){
             ps.setInt(1, factionId);
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()){
-                invites.add(new Invite(
+                requests.add(new Request(
                         rs.getInt("id"),
-                        rs.getInt("receiver_id"),
+                        rs.getInt("sender_id"),
                         rs.getInt("faction_id"),
                         rs.getLong("created_at")
                 ));
             }
-            return invites;
+            return requests;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     public int deleteById(int id){
-        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Invites WHERE id = ?")){
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Requests WHERE id = ?")){
             ps.setInt(1, id);
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -137,7 +138,7 @@ public class InviteDAO {
     }
 
     public int deleteExpired(long lifespan){
-        try (PreparedStatement ps = connection.prepareStatement(" DELETE FROM Invites WHERE created_at < strftime('%s','now') - ?")){
+        try (PreparedStatement ps = connection.prepareStatement(" DELETE FROM Requests WHERE created_at < strftime('%s','now') - ?")){
             ps.setLong(1, lifespan);
             return ps.executeUpdate();
         } catch (SQLException e) {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/src/main/java/net/entropyentertainment/simplefactions/database/dao/FactionDAO.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/net/entropyentertainment/simplefactions/database/dao/InviteDAO.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/net/entropyentertainment/simplefactions/database/dao/MemberDAO.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/net/entropyentertainment/simplefactions/database/dao/RequestDAO.java" dialect="GenericSQL" />
+  </component>
+</project>
