@@ -12,6 +12,10 @@ public class Member {
         this.factionId = factionId;
     }
 
+    public Member(int id, String name){
+        this(id, name, null);
+    }
+
     public int getId() {
         return id;
     }

@@ -40,6 +40,10 @@ public final class Database {
             connection = DriverManager.getConnection(jdbcUrl);
             connection.createStatement().execute("PRAGMA foreign_keys = ON");
 
+            factionDAO = new FactionDAO(connection);
+            memberDAO = new MemberDAO(connection);
+            inviteDAO = new InviteDAO(connection);
+            requestDAO = new RequestDAO(connection);
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
@@ -53,37 +57,22 @@ public final class Database {
     }
 
     public static Database getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Database not initialized");
-        }
         return instance;
     }
 
     public FactionDAO factions() {
-        if(factionDAO == null){
-            factionDAO = new FactionDAO(connection);
-        }
         return factionDAO;
     }
 
     public MemberDAO members() {
-        if(memberDAO == null){
-            memberDAO = new MemberDAO(connection);
-        }
         return memberDAO;
     }
 
     public InviteDAO invites() {
-        if(inviteDAO == null){
-            inviteDAO = new InviteDAO(connection);
-        }
         return inviteDAO;
     }
 
     public RequestDAO requests(){
-        if(requestDAO == null){
-            requestDAO = new RequestDAO(connection);
-        }
         return requestDAO;
     }
 }
